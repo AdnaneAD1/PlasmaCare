@@ -97,21 +97,9 @@ export const onBackgroundMessage = (messaging) => {
     });
 };
 
-// Vérifier si le navigateur est Safari sur iOS
-const isIOSSafari = () => {
-    const ua = navigator.userAgent;
-    return /iPad|iPhone|iPod/.test(ua) && !window.MSStream && /Safari/.test(ua);
-};
-
 // Initialiser les notifications
 export const initializeNotifications = async () => {
     try {
-        // Vérifier si c'est Safari sur iOS (ne pas initialiser Firebase)
-        if (isIOSSafari()) {
-            console.warn('Les notifications ne sont pas entièrement supportées sur Safari iOS');
-            return null;
-        }
-        
         // Vérifier si les notifications sont supportées
         if (!('Notification' in window)) {
             console.warn('Ce navigateur ne supporte pas les notifications de bureau');

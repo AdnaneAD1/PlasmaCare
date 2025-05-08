@@ -103,7 +103,7 @@ export default function AdminLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Mobile */}
-      <header className="h-20 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-30 lg:hidden">
+      <header className="h-16 bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-30 lg:hidden">
         <div className="flex items-center justify-between px-4 h-full">
           <Logo />
           <div className="flex items-center gap-4">
