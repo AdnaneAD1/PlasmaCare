@@ -61,7 +61,7 @@ export default function ForgotPassword() {
             Vous avez oublié votre mot de passe ? Pas de problème. Indiquez-nous simplement votre adresse e-mail et nous vous enverrons un lien de réinitialisation qui vous permettra d&apos;en choisir un nouveau.
           </div>
 
-          <AuthSessionStatus className="mb-4" status={status} isError={Object.keys(errors).length > 0} />
+          <AuthSessionStatus className="mb-4" status={status} />
 
           <form className="space-y-6" onSubmit={submitForm}>
             <div>
