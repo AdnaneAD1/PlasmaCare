@@ -10,9 +10,20 @@ export default function Notifications() {
   const { notifications, loading, error, markAsRead } = useNotifications();
 
   useEffect(() => {
-    initializeNotifications().catch(error => {
-      console.error('Erreur lors de l\'initialisation des notifications:', error)
-    })
+    // Vérifier si nous sommes sur iOS Safari
+    const isIOSSafari = () => {
+      const ua = navigator.userAgent;
+      return /iPad|iPhone|iPod/.test(ua) && !window.MSStream && /Safari/.test(ua);
+    };
+    
+    // Ne pas initialiser les notifications sur iOS Safari
+    if (!isIOSSafari()) {
+      initializeNotifications().catch(error => {
+        console.error('Erreur lors de l\'initialisation des notifications:', error)
+      });
+    } else {
+      console.log('Notifications non initialisées sur iOS Safari');
+    }
   }, [])
 
   const handleMarkAsRead = async (notificationId) => {
