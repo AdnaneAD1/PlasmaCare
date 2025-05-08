@@ -62,7 +62,7 @@ export default function PasswordReset({ params }) {
             Veuillez saisir votre adresse e-mail et choisir un nouveau mot de passe.
           </div>
 
-          <AuthSessionStatus className="mb-4" status={status} />
+          <AuthSessionStatus className="mb-4" status={status} isError={Object.keys(errors).length > 0} />
 
           <form className="space-y-6" onSubmit={submitForm}>
             <div>

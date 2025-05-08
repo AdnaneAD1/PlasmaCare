@@ -81,7 +81,7 @@ export default function Login() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-sm rounded-lg sm:px-10">
-          <AuthSessionStatus className="mb-4" status={status} />
+          <AuthSessionStatus className="mb-4" status={status} isError={Object.keys(errors).length > 0} />
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>

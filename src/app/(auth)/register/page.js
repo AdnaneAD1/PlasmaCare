@@ -117,11 +117,7 @@ export default function Register() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-sm rounded-lg sm:px-10">
-          {status && (
-            <div className="mb-4 text-sm font-medium text-green-600">
-              {status}
-            </div>
-          )}
+          <AuthSessionStatus className="mb-4" status={status} isError={Object.keys(errors).length > 0} />
           {errors.general && (
             <div className="mb-4 text-sm font-medium text-red-600">
               {errors.general}

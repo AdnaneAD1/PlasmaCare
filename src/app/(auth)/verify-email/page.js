@@ -49,7 +49,7 @@ export default function VerifyEmail() {
           </div>
 
           <div className="mt-4">
-            <AuthSessionStatus className="mb-4" status={status} />
+            <AuthSessionStatus className="mb-4" status={status} isError={false} />
           </div>
 
           <div className="mt-4 flex flex-col space-y-4">
