@@ -104,9 +104,9 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             .then(() => {
                 mutate()
                 if (redirectIfAuthenticated) {
-                    router.push(redirectIfAuthenticated)
+                    window.location.href = redirectIfAuthenticated
                 } else {
-                    router.push('/dashboard')
+                    window.location.href = '/dashboard'
                 }
             })
             .catch(error => {

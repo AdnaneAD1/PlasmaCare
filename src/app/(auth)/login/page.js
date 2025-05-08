@@ -28,12 +28,12 @@ export default function Login() {
   useEffect(() => {
     if (user) {
       if (user.role === 'admin') {
-        router.push('/admin')
+        window.location.href = '/admin';
       } else {
-        router.push('/dashboard')
+        window.location.href = '/dashboard';
       }
     }
-  }, [user, router])
+  }, [user])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -45,6 +45,17 @@ export default function Login() {
         setErrors,
         setStatus,
       })
+      
+      // Attendre un court instant avant de rediriger
+      setTimeout(() => {
+        // Redirection manuelle selon le rôle
+        if (user && user.role === 'admin') {
+          window.location.href = '/admin';
+        } else {
+          window.location.href = '/dashboard';
+        }
+      }, 1000);
+      
     } finally {
       setIsLoading(false)
     }

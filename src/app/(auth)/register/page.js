@@ -60,6 +60,7 @@ export default function Register() {
 
       if (Object.keys(validationErrors).length > 0) {
         setErrors(validationErrors);
+        setIsLoading(false);
         return;
       }
 
@@ -77,8 +78,15 @@ export default function Register() {
       };
 
       console.log('Submitting registration data:', registerData);
-      await register({ setErrors, ...registerData });
+      const response = await register({ setErrors, ...registerData });
       setStatus('Votre compte a été créé avec succès!');
+      
+      // Attendre un court instant avant de rediriger
+      setTimeout(() => {
+        // Utiliser window.location au lieu de router.push
+        window.location.href = '/dashboard';
+      }, 1000);
+      
     } catch (error) {
       console.error('Erreur d\'inscription:', error);
       setStatus('Une erreur est survenue lors de l\'inscription.');
