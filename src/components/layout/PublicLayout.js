@@ -122,7 +122,7 @@ export function PublicLayout({ children }) {
                 initial="closed"
                 animate="open"
                 exit="closed"
-                className="md:hidden fixed right-0 top-0 bottom-0 w-64 bg-white/95 backdrop-blur-sm shadow-xl z-40"
+                className="md:hidden fixed right-0 top-0 bottom-0 w-64 bg-white backdrop-blur-sm shadow-xl z-40"
                 onClick={e => e.stopPropagation()}
               >
                 <div className="flex flex-col h-full pt-20">

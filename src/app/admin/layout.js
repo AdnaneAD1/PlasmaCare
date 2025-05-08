@@ -181,14 +181,6 @@ export default function AdminLayout({ children }) {
         <div className="flex-1 flex flex-col">
           {/* Header Desktop */}
           <header className="h-16 min-h-[64px] bg-white border-b border-gray-200 hidden lg:flex items-center justify-between px-6 shadow-sm">
-            <div className="flex items-center gap-6">
-              <Link
-                href="/admin/notifications"
-                className={`p-2 rounded-lg hover:bg-gray-100 relative ${pathname === '/admin/notifications' ? 'text-primary' : 'text-gray-600'}`}
-              >
-                <Bell className="w-5 h-5" />
-              </Link>
-            </div>
             <div className="flex items-center bg-gray-50 py-1.5 px-3 rounded-lg">
               <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-primary" />
