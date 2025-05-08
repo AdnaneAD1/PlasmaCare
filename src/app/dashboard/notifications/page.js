@@ -3,9 +3,17 @@
 import { Bell, Calendar, FileText, MessageCircle } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { initializeNotifications } from '@/services/firebase'
+import { useEffect } from 'react';
 
 export default function Notifications() {
   const { notifications, loading, error, markAsRead } = useNotifications();
+
+  useEffect(() => {
+    initializeNotifications().catch(error => {
+      console.error('Erreur lors de l\'initialisation des notifications:', error)
+    })
+  }, [])
 
   const handleMarkAsRead = async (notificationId) => {
     try {
@@ -53,7 +61,7 @@ export default function Notifications() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Notifications</h1>
-        <button 
+        <button
           className="text-sm text-primary hover:text-primary/80"
           onClick={() => notifications.filter(n => !n.read).forEach(n => handleMarkAsRead(n.id))}
         >
@@ -66,8 +74,8 @@ export default function Notifications() {
           {notifications.map((notification) => {
             const Icon = getIcon(notification.type);
             return (
-              <div 
-                key={notification.id} 
+              <div
+                key={notification.id}
                 className={`p-6 flex items-start gap-4 ${!notification.read ? 'bg-primary/5' : ''} cursor-pointer`}
                 onClick={() => !notification.read && handleMarkAsRead(notification.id)}
               >
