@@ -192,14 +192,14 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
     useEffect(() => {
         if (middleware === 'guest' && redirectIfAuthenticated && user)
-            window.location.pathname = redirectIfAuthenticated
+            window.location.href = redirectIfAuthenticated
         if (middleware === 'auth' && (user && !user.email_verified_at))
-            window.location.pathname = '/verify-email'
+            window.location.href = '/verify-email'
         if (
-            window.location.pathname === '/verify-email' &&
+            window.location.href === '/verify-email' &&
             user?.email_verified_at
         )
-            window.location.pathname = redirectIfAuthenticated
+            window.location.href = redirectIfAuthenticated
         if (middleware === 'auth' && error) logout()
     }, [user, error, middleware, redirectIfAuthenticated, router, logout])
 
