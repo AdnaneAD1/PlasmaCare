@@ -46,16 +46,24 @@ export default function Login() {
         setStatus,
       })
       
-      // Attendre un court instant avant de rediriger
-      setTimeout(() => {
-        // Redirection manuelle selon le rôle
-        if (user && user.role === 'admin') {
-          window.location.href = '/admin';
-        } else {
-          window.location.href = '/dashboard';
-        }
-      }, 1000);
+      // Solution spécifique pour iOS/Safari
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       
+      if (isIOS) {
+        // Redirection immédiate pour iOS avec URL complète
+        const baseUrl = window.location.origin;
+        const redirectPath = user && user.role === 'admin' ? '/admin' : '/dashboard';
+        window.location.replace(baseUrl + redirectPath);
+      } else {
+        // Pour les autres navigateurs, utiliser un délai
+        setTimeout(() => {
+          if (user && user.role === 'admin') {
+            window.location.href = '/admin';
+          } else {
+            window.location.href = '/dashboard';
+          }
+        }, 1000);
+      }
     } finally {
       setIsLoading(false)
     }
