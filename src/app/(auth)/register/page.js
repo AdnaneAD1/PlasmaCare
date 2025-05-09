@@ -75,28 +75,25 @@ export default function Register() {
           last_name: formData.lastName,
           phone: formData.phone,
         },
-        // Ajouter un callback de redirection
-        redirectCallback: (userData) => {
-          console.log('Redirection après inscription avec données:', userData);
-          setStatus('Votre compte a été créé avec succès!');
-          
-          // Solution spécifique pour iOS/Safari
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-          const baseUrl = window.location.origin;
-          
-          if (isIOS) {
-            // Redirection immédiate pour iOS avec URL complète
-            window.location.replace(baseUrl + '/dashboard');
-          } else {
-            // Pour les autres navigateurs
-            window.location.href = '/dashboard';
-          }
-        }
       };
 
       console.log('Submitting registration data:', registerData);
-      await register({ setErrors, ...registerData });
-      // La redirection est maintenant gérée par le callback
+      const response = await register({ setErrors, ...registerData });
+      setStatus('Votre compte a été créé avec succès!');
+      
+      // Solution spécifique pour iOS/Safari
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      
+      if (isIOS) {
+        // Redirection immédiate pour iOS avec URL complète
+        const baseUrl = window.location.origin;
+        window.location.replace(baseUrl + '/dashboard');
+      } else {
+        // Pour les autres navigateurs, utiliser un délai
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1000);
+      }
       
     } catch (error) {
       console.error('Erreur d\'inscription:', error);

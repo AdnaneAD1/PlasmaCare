@@ -39,32 +39,31 @@ export default function Login() {
     e.preventDefault()
     setIsLoading(true)
     try {
-      // Passer un callback de redirection directement à la fonction login
       await login({
         email: formData.email,
         password: formData.password,
         setErrors,
         setStatus,
-        redirectCallback: (userData) => {
-          // Le callback reçoit les données utilisateur après authentification réussie
-          console.log('Redirection avec les données utilisateur:', userData);
-          
-          // Solution spécifique pour iOS/Safari
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-          const baseUrl = window.location.origin;
-          const redirectPath = userData && userData.role === 'admin' ? '/admin' : '/dashboard';
-          
-          if (isIOS) {
-            // Redirection immédiate pour iOS avec URL complète
-            window.location.replace(baseUrl + redirectPath);
-          } else {
-            // Pour les autres navigateurs
-            window.location.href = redirectPath;
-          }
-        }
       })
       
-      // La redirection est maintenant gérée par le callback
+      // Solution spécifique pour iOS/Safari
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      
+      if (isIOS) {
+        // Redirection immédiate pour iOS avec URL complète
+        const baseUrl = window.location.origin;
+        const redirectPath = user && user.role === 'admin' ? '/admin' : '/dashboard';
+        window.location.replace(baseUrl + redirectPath);
+      } else {
+        // Pour les autres navigateurs, utiliser un délai
+        setTimeout(() => {
+          if (user && user.role === 'admin') {
+            window.location.href = '/admin';
+          } else {
+            window.location.href = '/dashboard';
+          }
+        }, 1000);
+      }
     } finally {
       setIsLoading(false)
     }
