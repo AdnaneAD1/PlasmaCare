@@ -17,9 +17,19 @@ export default function DashboardLayout({ children }) {
 
   useEffect(() => {
     if (user) {
-      initializeNotifications().catch(error => {
-        console.error('Erreur lors de l\'initialisation des notifications:', error)
-      })
+      // Vérifier si les notifications sont supportées avant d'initialiser
+      if ('Notification' in window && 'serviceWorker' in navigator) {
+        try {
+          // Envelopper dans un try-catch pour éviter les crashes
+          initializeNotifications().catch(error => {
+            console.error('Erreur lors de l\'initialisation des notifications:', error)
+          })
+        } catch (error) {
+          console.error('Exception lors de l\'initialisation des notifications:', error)
+        }
+      } else {
+        console.log('Les notifications ne sont pas supportées sur ce navigateur')
+      }
     }
   }, [user])
 
