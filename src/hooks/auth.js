@@ -101,7 +101,12 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
         axios
             .post('/login', props)
-            .then(() => {
+            .then(response => {
+                // Stocker le rôle de l'utilisateur pour la redirection
+                if (response.data && response.data.user && response.data.user.role) {
+                    localStorage.setItem('userRole', response.data.user.role);
+                }
+                
                 mutate()
                 if (redirectIfAuthenticated) {
                     window.location.href = redirectIfAuthenticated

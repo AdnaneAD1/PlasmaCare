@@ -39,6 +39,10 @@ export default function Login() {
     e.preventDefault()
     setIsLoading(true)
     try {
+      // Stocker les informations de connexion dans localStorage pour une redirection manuelle
+      localStorage.setItem('pendingRedirect', 'true');
+      localStorage.setItem('lastLoginEmail', formData.email);
+      
       await login({
         email: formData.email,
         password: formData.password,
@@ -46,24 +50,12 @@ export default function Login() {
         setStatus,
       })
       
-      // Solution spécifique pour iOS/Safari
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      
-      if (isIOS) {
-        // Redirection immédiate pour iOS avec URL complète
-        const baseUrl = window.location.origin;
-        const redirectPath = user && user.role === 'admin' ? '/admin' : '/dashboard';
-        window.location.replace(baseUrl + redirectPath);
-      } else {
-        // Pour les autres navigateurs, utiliser un délai
-        setTimeout(() => {
-          if (user && user.role === 'admin') {
-            window.location.href = '/admin';
-          } else {
-            window.location.href = '/dashboard';
-          }
-        }, 1000);
-      }
+      // Forcer la redirection après un court délai
+      setTimeout(() => {
+        // Redirection manuelle vers la page appropriée
+        const redirectTo = user && user.role === 'admin' ? '/admin' : '/dashboard';
+        window.location.href = redirectTo;
+      }, 500);
     } finally {
       setIsLoading(false)
     }

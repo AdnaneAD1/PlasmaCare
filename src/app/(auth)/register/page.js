@@ -78,22 +78,18 @@ export default function Register() {
       };
 
       console.log('Submitting registration data:', registerData);
+      
+      // Stocker l'information qu'une redirection est en attente
+      localStorage.setItem('pendingRedirect', 'true');
+      
       const response = await register({ setErrors, ...registerData });
       setStatus('Votre compte a été créé avec succès!');
       
-      // Solution spécifique pour iOS/Safari
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      
-      if (isIOS) {
-        // Redirection immédiate pour iOS avec URL complète
-        const baseUrl = window.location.origin;
-        window.location.replace(baseUrl + '/dashboard');
-      } else {
-        // Pour les autres navigateurs, utiliser un délai
-        setTimeout(() => {
-          window.location.href = '/dashboard';
-        }, 1000);
-      }
+      // Forcer la redirection après un court délai
+      setTimeout(() => {
+        // Redirection directe vers le dashboard
+        window.location = '/dashboard';
+      }, 500);
       
     } catch (error) {
       console.error('Erreur d\'inscription:', error);
