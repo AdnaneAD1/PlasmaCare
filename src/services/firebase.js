@@ -97,9 +97,23 @@ export const onBackgroundMessage = (messaging) => {
     });
 };
 
+// Fonction pour détecter iOS et Safari
+const isIOSorSafari = () => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const isIOS = /iphone|ipad|ipod/.test(userAgent);
+    const isSafari = /safari/.test(userAgent) && !/chrome/.test(userAgent);
+    return isIOS || isSafari;
+};
+
 // Initialiser les notifications
 export const initializeNotifications = async () => {
     try {
+        // Vérifier si nous sommes sur iOS ou Safari
+        if (isIOSorSafari()) {
+            console.warn('Les notifications ne sont pas entièrement supportées sur iOS/Safari');
+            return null;
+        }
+
         // Vérifier si les notifications sont supportées
         if (!('Notification' in window)) {
             console.warn('Ce navigateur ne supporte pas les notifications de bureau');

@@ -9,7 +9,25 @@ import { useEffect } from 'react';
 export default function Notifications() {
   const { notifications, loading, error, markAsRead } = useNotifications();
 
-  
+  useEffect(() => {
+    // Essayer d'initialiser les notifications, mais ne pas bloquer l'interface si cela échoue
+    try {
+      // Vérifier si nous sommes sur iOS ou Safari
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      const isIOS = /iphone|ipad|ipod/.test(userAgent);
+      const isSafari = /safari/.test(userAgent) && !/chrome/.test(userAgent);
+      
+      if (!isIOS && !isSafari) {
+        initializeNotifications().catch(error => {
+          console.error('Erreur lors de l\'initialisation des notifications:', error)
+        });
+      } else {
+        console.log('Notifications désactivées sur iOS/Safari pour éviter les erreurs')
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification de la compatibilité:', error)
+    }
+  }, [])
 
   const handleMarkAsRead = async (notificationId) => {
     try {
