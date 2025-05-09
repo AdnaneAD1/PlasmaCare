@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 import axios from '@/lib/axios'
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
 // Fonction pour traduire les messages d'erreur en français
@@ -63,7 +63,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
     const csrf = () => axios.get('/sanctum/csrf-cookie')
 
-    const register = async ({ setErrors, ...props }) => {
+    const register = async ({ setErrors, redirectCallback, ...props }) => {
         try {
             console.log('Démarrage du processus d\'inscription...');
             console.log('Données d\'inscription:', props);
@@ -76,8 +76,20 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             const response = await axios.post('/register', props);
             console.log('Réponse d\'inscription:', response.data);
 
+            // Récupérer les données utilisateur après inscription
+            const userData = await axios.get('/api/user').then(res => res.data);
             await mutate();
-            return response.data;
+            
+            // Si un callback de redirection est fourni, l'utiliser
+            if (redirectCallback && typeof redirectCallback === 'function') {
+                redirectCallback(userData);
+            }
+            // Sinon, utiliser la redirection par défaut
+            else if (redirectIfAuthenticated) {
+                window.location.href = redirectIfAuthenticated;
+            }
+            
+            return userData;
         } catch (error) {
             console.error('Erreur d\'inscription:', error.response || error);
 
@@ -93,27 +105,37 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         }
     }
 
-    const login = async ({ setErrors, setStatus, ...props }) => {
+    const login = async ({ setErrors, setStatus, redirectCallback, ...props }) => {
         await csrf()
 
         setErrors([])
         setStatus(null)
 
-        axios
-            .post('/login', props)
-            .then(() => {
-                mutate()
-                if (redirectIfAuthenticated) {
-                    window.location.href = redirectIfAuthenticated
-                } else {
-                    window.location.href = '/dashboard'
-                }
-            })
-            .catch(error => {
-                if (error.response.status !== 422) throw error
-
+        try {
+            const response = await axios.post('/login', props)
+            const userData = await axios.get('/api/user').then(res => res.data)
+            await mutate()
+            
+            // Si un callback de redirection est fourni, l'utiliser
+            if (redirectCallback && typeof redirectCallback === 'function') {
+                redirectCallback(userData)
+            } 
+            // Sinon, utiliser la redirection par défaut
+            else if (redirectIfAuthenticated) {
+                window.location.href = redirectIfAuthenticated
+            } else {
+                window.location.href = '/dashboard'
+            }
+            
+            return userData
+        } catch (error) {
+            if (error.response && error.response.status === 422) {
                 setErrors(translateErrors(error.response.data.errors))
-            })
+            } else {
+                console.error('Erreur de connexion:', error)
+                throw error
+            }
+        }
     }
 
     const googleLogin = async () => {
@@ -180,7 +202,8 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             .then(response => setStatus(response.data.status))
     }
 
-    const logout = async () => {
+    // Utiliser useCallback pour éviter les re-rendus inutiles
+    const logout = useCallback(async () => {
         if (!error) {
             await axios.post('/logout')
             localStorage.removeItem('token')
@@ -188,7 +211,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         }
 
         window.location.pathname = '/login'
-    }
+    }, [error, mutate])
 
     useEffect(() => {
         // Détecter iOS/Safari
