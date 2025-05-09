@@ -8,30 +8,11 @@ import { Logo } from '../../components/ui/Logo'
 import { useAuth } from '@/hooks/auth'
 import Loading from '@/app/(auth)/Loading'
 import { LoadingButton } from '@/components/ui/LoadingButton'
-import { initializeNotifications } from '@/services/firebase'
 
 export default function DashboardLayout({ children }) {
   const { user, logout } = useAuth({ middleware: 'auth', redirectIfAuthenticated: '/login' })
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const pathname = usePathname()
-
-  useEffect(() => {
-    if (user) {
-      // Vérifier si les notifications sont supportées avant d'initialiser
-      if ('Notification' in window && 'serviceWorker' in navigator) {
-        try {
-          // Envelopper dans un try-catch pour éviter les crashes
-          initializeNotifications().catch(error => {
-            console.error('Erreur lors de l\'initialisation des notifications:', error)
-          })
-        } catch (error) {
-          console.error('Exception lors de l\'initialisation des notifications:', error)
-        }
-      } else {
-        console.log('Les notifications ne sont pas supportées sur ce navigateur')
-      }
-    }
-  }, [user])
 
   const menuItems = [
     { 
