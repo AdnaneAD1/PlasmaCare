@@ -20,6 +20,14 @@ export default function DashboardLayout({ children }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const pathname = usePathname()
 
+  useEffect(() => {
+    if (user) {
+      initializeNotifications().catch(error => {
+        console.error('Erreur lors de l\'initialisation des notifications:', error)
+      })
+    }
+  }, [user])
+
   const menuItems = [
     { 
       icon: LayoutDashboard, 
