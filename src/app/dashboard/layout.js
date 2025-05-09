@@ -10,11 +10,6 @@ import Loading from '@/app/(auth)/Loading'
 import { LoadingButton } from '@/components/ui/LoadingButton'
 import { initializeNotifications } from '@/services/firebase'
 
-export const fetchCache = 'force-no-store'; // ⬅️ Désactive le cache = SSR à chaque fois
-
-export const dynamic = 'force-dynamic'; // ⬅️ Forcer le rendu dynamique (SSR)
-
-
 export default function DashboardLayout({ children }) {
   const { user, logout } = useAuth({ middleware: 'auth', redirectIfAuthenticated: '/login' })
   const [isLoggingOut, setIsLoggingOut] = useState(false)
