@@ -196,36 +196,19 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     }
 
     useEffect(() => {
-        // Détecter iOS/Safari
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const baseUrl = window.location.origin;
+        if (middleware === 'guest' && redirectIfAuthenticated && user)
+            router.push(redirectIfAuthenticated)
+
+        if (middleware === 'auth' && (user && !user.email_verified_at))
+            router.push('/verify-email')
         
-        if (middleware === 'guest' && redirectIfAuthenticated && user) {
-            if (isIOS) {
-                window.location.replace(baseUrl + redirectIfAuthenticated);
-            } else {
-                window.location.pathname = redirectIfAuthenticated;
-            }
-        }
-        
-        if (middleware === 'auth' && (user && !user.email_verified_at)) {
-            if (isIOS) {
-                window.location.replace(baseUrl + '/verify-email');
-            } else {
-                window.location.pathname = '/verify-email';
-            }
-        }
-        
-        if (window.location.pathname === '/verify-email' && user?.email_verified_at) {
-            if (isIOS) {
-                window.location.replace(baseUrl + redirectIfAuthenticated);
-            } else {
-                window.location.pathname = redirectIfAuthenticated;
-            }
-        }
-        
-        if (middleware === 'auth' && error) logout();
-    }, [user, error, middleware, redirectIfAuthenticated, router, logout])
+        if (
+            window.location.pathname === '/verify-email' &&
+            user?.email_verified_at
+        )
+            router.push(redirectIfAuthenticated)
+        if (middleware === 'auth' && error) logout()
+    }, [user, error])
 
     return {
         user,
