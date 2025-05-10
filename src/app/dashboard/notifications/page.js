@@ -3,10 +3,12 @@
 import { Bell, Calendar, FileText, MessageCircle } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { initializeNotifications } from '@/services/firebase'
+// import { initializeNotifications } from '@/services/firebase'
 import { useEffect } from 'react';
 import { useAuth } from '@/hooks/auth';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 export default function Notifications() {
   const { user } = useAuth();
   const { notifications, loading, error, markAsRead } = useNotifications();
@@ -17,9 +19,9 @@ export default function Notifications() {
         if ('Notification' in window && 'serviceWorker' in navigator) {
           try {
             // Envelopper dans un try-catch pour éviter les crashes
-            initializeNotifications().catch(error => {
-              console.error('Erreur lors de l\'initialisation des notifications:', error)
-            })
+            // initializeNotifications().catch(error => {
+            //   console.error('Erreur lors de l\'initialisation des notifications:', error)
+            // })
           } catch (error) {
             console.error('Exception lors de l\'initialisation des notifications:', error)
           }
