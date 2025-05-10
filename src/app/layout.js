@@ -34,7 +34,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <head>
-        <link rel="manifest" href="/manifest.json" />
         <script dangerouslySetInnerHTML={{ __html: `
           // Script pour gérer la redirection sur iOS
           (function() {
