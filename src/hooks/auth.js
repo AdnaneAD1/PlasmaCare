@@ -216,11 +216,11 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         //     }
         // }
         
-        if (window.location.pathname === '/verify-email' && user?.email_verified_at) {
+        if (window.location.pathname === '/verify-email' && user) {
             if (isIOS) {
-                window.location.replace(baseUrl + redirectIfAuthenticated);
+                window.location.replace(baseUrl + redirectIfAuthenticated || '/dashboard');
             } else {
-                window.location.pathname = redirectIfAuthenticated;
+                window.location.pathname = redirectIfAuthenticated || '/dashboard';
             }
         }
         
