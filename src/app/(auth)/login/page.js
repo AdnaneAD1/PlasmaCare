@@ -28,12 +28,13 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
-      if (window.location.pathname !== redirectPath) {
-        window.location.href = redirectPath;
+      if (user.role === 'admin') {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = '/dashboard';
       }
     }
-  }, [user]);
+  }, [user])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -42,20 +43,20 @@ export default function Login() {
       // Stocker les informations de connexion dans localStorage pour une redirection manuelle
       localStorage.setItem('pendingRedirect', 'true');
       localStorage.setItem('lastLoginEmail', formData.email);
-
+      
       await login({
         email: formData.email,
         password: formData.password,
         setErrors,
         setStatus,
       })
-
+      
       // Forcer la redirection après un court délai
-      setTimeout(() => {
-        // Redirection manuelle vers la page appropriée
-        const redirectTo = user && user.role === 'admin' ? '/admin' : '/dashboard';
-        window.location.href = redirectTo;
-      }, 500);
+      // setTimeout(() => {
+      //   // Redirection manuelle vers la page appropriée
+      //   const redirectTo = user && user.role === 'admin' ? '/admin' : '/dashboard';
+      //   window.location.href = redirectTo;
+      // }, 500);
     } finally {
       setIsLoading(false)
     }
