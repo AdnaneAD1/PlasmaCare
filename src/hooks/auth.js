@@ -106,6 +106,9 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 if (response.data && response.data.user && response.data.user.role) {
                     localStorage.setItem('userRole', response.data.user.role);
                 }
+                console.log(
+                    response.data.user.role, response.user.role
+                )
                 
                 mutate()
                 if (redirectIfAuthenticated) {
