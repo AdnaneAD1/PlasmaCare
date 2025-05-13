@@ -263,6 +263,9 @@ export default function Register() {
                   placeholder="••••••••"
                 />
               </div>
+              {errors.password_confirmation && (
+                <div className="mt-1 text-sm text-red-600">{errors.password_confirmation[0]}</div>
+              )}
             </div>
 
             <div className="flex items-center">
