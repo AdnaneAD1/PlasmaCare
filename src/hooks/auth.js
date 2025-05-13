@@ -106,12 +106,10 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 if (response.data && response.data.user && response.data.user.role) {
                     localStorage.setItem('userRole', response.data.user.role);
                 }
-                console.log(user)
+                
                 mutate()
                 if (redirectIfAuthenticated) {
                     window.location.href = redirectIfAuthenticated
-                } else if (user.role === 'admin') {
-                    window.location.href = '/admin'
                 } else {
                     window.location.href = '/dashboard'
                 }

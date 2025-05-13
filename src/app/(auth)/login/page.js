@@ -13,6 +13,7 @@ export default function Login() {
   const router = useRouter()
   const { login, googleLogin, user } = useAuth({
     middleware: 'guest',
+    redirectIfAuthenticated: user.role === 'admin' ? '/admin' : '/dashboard',
   })
 
   const [formData, setFormData] = useState({
