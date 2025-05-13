@@ -52,11 +52,11 @@ export default function Login() {
       })
       
       // Forcer la redirection après un court délai
-      // setTimeout(() => {
-      //   // Redirection manuelle vers la page appropriée
-      //   const redirectTo = user && user.role === 'admin' ? '/admin' : '/dashboard';
-      //   window.location.href = redirectTo;
-      // }, 500);
+      setTimeout(() => {
+        // Redirection manuelle vers la page appropriée
+        const redirectTo = user && user.role === 'admin' ? '/admin' : '/dashboard';
+        window.location.href = redirectTo;
+      }, 500);
     } finally {
       setIsLoading(false)
     }

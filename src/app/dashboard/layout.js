@@ -15,37 +15,45 @@ export default function DashboardLayout({ children }) {
   const pathname = usePathname()
 
   const menuItems = [
-    { 
-      icon: LayoutDashboard, 
-      label: 'Accueil', 
+    {
+      icon: LayoutDashboard,
+      label: 'Accueil',
       path: '/dashboard',
       showMobile: true
     },
-    { 
-      icon: Calendar, 
-      label: 'Rendez-vous', 
+    {
+      icon: Calendar,
+      label: 'Rendez-vous',
       path: '/dashboard/appointments',
       showMobile: true
     },
-    { 
-      icon: FileText, 
-      label: 'Diagnostic', 
+    {
+      icon: FileText,
+      label: 'Diagnostic',
       path: '/dashboard/diagnosis',
       showMobile: true
     },
-    { 
-      icon: Bell, 
-      label: 'Notifications', 
+    {
+      icon: Bell,
+      label: 'Notifications',
       path: '/dashboard/notifications',
       showMobile: false
     },
-    { 
-      icon: User, 
-      label: 'Profil', 
+    {
+      icon: User,
+      label: 'Profil',
       path: '/dashboard/profile',
       showMobile: true
     }
   ]
+
+  useEffect(() => {
+    if (user) {
+      if (user.role === 'admin') {
+        window.location.href = '/admin';
+      }
+    }
+  }, [user])
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -168,7 +176,7 @@ export default function DashboardLayout({ children }) {
               </div>
             </div>
           </header>
-          
+
           <main className="flex-1 w-full pt-16 lg:pt-0">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-8">
               {children}
