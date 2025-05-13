@@ -103,7 +103,7 @@ export default function DashboardLayout({ children }) {
         {/* Sidebar Desktop */}
         <aside className="bg-white border-r border-gray-200 w-72 hidden lg:block">
           <div className="flex flex-col h-full">
-            <div className="h-16 flex items-center px-6 border-b">
+            <div className="h-20 flex items-center px-6 border-b">
               <Logo />
             </div>
 
@@ -157,7 +157,7 @@ export default function DashboardLayout({ children }) {
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Header Desktop */}
-          <header className="h-16 min-h-[64px] bg-white border-b border-gray-200 hidden lg:flex items-center justify-between px-6 shadow-sm">
+          <header className="h-20 min-h-[64px] bg-white border-b border-gray-200 hidden lg:flex items-center justify-between px-6 shadow-sm">
             <div className="flex items-center gap-6">
               <Link
                 href="/dashboard/notifications"

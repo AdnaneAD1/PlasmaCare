@@ -128,7 +128,7 @@ export default function AdminLayout({ children }) {
         {/* Sidebar Desktop */}
         <aside className="bg-white border-r border-gray-200 w-72 hidden lg:block">
           <div className="flex flex-col h-full">
-            <div className="h-16 flex items-center px-6 border-b">
+            <div className="h-20 flex items-center px-6 border-b">
               <Logo />
               <span className="ml-4 text-sm font-medium text-gray-500">
                 Espace Administration
@@ -180,7 +180,7 @@ export default function AdminLayout({ children }) {
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Header Desktop */}
-          <header className="h-16 min-h-[64px] bg-white border-b border-gray-200 hidden lg:flex items-center justify-between px-6 shadow-sm">
+          <header className="h-20 min-h-[64px] bg-white border-b border-gray-200 hidden lg:flex items-center justify-between px-6 shadow-sm">
             <div className="flex items-center bg-gray-50 py-1.5 px-3 rounded-lg">
               <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-primary" />
