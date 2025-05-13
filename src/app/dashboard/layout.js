@@ -157,7 +157,7 @@ export default function DashboardLayout({ children }) {
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Header Desktop */}
-          <header className="h-20 min-h-[64px] bg-white border-b border-gray-200 hidden lg:flex items-center justify-between px-6 shadow-sm">
+          <header className="h-20 min-h-[80px] bg-white border-b border-gray-200 hidden lg:flex items-center justify-between px-6 shadow-sm">
             <div className="flex items-center gap-6">
               <Link
                 href="/dashboard/notifications"
