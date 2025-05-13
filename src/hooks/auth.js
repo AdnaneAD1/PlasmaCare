@@ -110,6 +110,8 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 mutate()
                 if (redirectIfAuthenticated) {
                     window.location.href = redirectIfAuthenticated
+                } else if (response.data.user.role === 'admin') {
+                    window.location.href = '/admin'
                 } else {
                     window.location.href = '/dashboard'
                 }
