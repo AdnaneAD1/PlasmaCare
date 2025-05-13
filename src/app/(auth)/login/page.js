@@ -13,7 +13,7 @@ export default function Login() {
   const router = useRouter()
   const { login, googleLogin, user } = useAuth({
     middleware: 'guest',
-    redirectIfAuthenticated: user.role === 'admin' ? '/admin' : '/dashboard',
+    redirectIfAuthenticated: '/dashboard',
   })
 
   const [formData, setFormData] = useState({
@@ -28,13 +28,12 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      if (user.role === 'admin') {
-        window.location.href = '/admin';
-      } else {
-        window.location.href = '/dashboard';
+      const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
+      if (window.location.pathname !== redirectPath) {
+        window.location.href = redirectPath;
       }
     }
-  }, [user])
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -43,14 +42,14 @@ export default function Login() {
       // Stocker les informations de connexion dans localStorage pour une redirection manuelle
       localStorage.setItem('pendingRedirect', 'true');
       localStorage.setItem('lastLoginEmail', formData.email);
-      
+
       await login({
         email: formData.email,
         password: formData.password,
         setErrors,
         setStatus,
       })
-      
+
       // Forcer la redirection après un court délai
       setTimeout(() => {
         // Redirection manuelle vers la page appropriée
