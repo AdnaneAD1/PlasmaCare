@@ -113,11 +113,13 @@ export default function AdminLayout({ children }) {
               </div>
               <span className="ml-2 text-sm font-medium">{user.name}</span>
             </div>
-            <button 
+            {/* <button 
               className="p-2 rounded-lg hover:bg-gray-100 relative"
               aria-label="Notifications"
             >
-            </button>
+              <Bell className="w-5 h-5 text-gray-600" />
+              <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
+            </button> */}
           </div>
         </div>
       </header>

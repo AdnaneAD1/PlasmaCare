@@ -73,7 +73,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
             setErrors([]);
 
-            const response = await axios.post('/register', props);
+            const response = await axios.post('/api/register', props);
             console.log('Réponse d\'inscription:', response.data);
 
             await mutate();
@@ -100,7 +100,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         setStatus(null)
 
         axios
-            .post('/login', props)
+            .post('/api/login', props)
             .then(response => {
                 // Stocker le rôle de l'utilisateur pour la redirection
                 if (response.data && response.data.user && response.data.user.role) {
