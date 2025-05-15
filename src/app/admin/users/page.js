@@ -42,21 +42,14 @@ export default function Users() {
   }
 
   return (
-    <div className="space-y-6 px-4 sm:px-6 md:px-0 py-4 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <h1 className="text-2xl font-bold">Utilisateurs</h1>
-        <div className="flex items-center gap-2">
-          <Link href="/admin/dashboard" className="text-sm text-gray-500 hover:text-primary">
-            Dashboard
-          </Link>
-          <span className="text-gray-400">/</span>
-          <span className="text-sm font-medium">Utilisateurs</span>
-        </div>
       </div>
 
       {/* Filters */}
       <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -67,22 +60,21 @@ export default function Users() {
               />
             </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button className="btn-secondary flex items-center gap-2 text-sm">
+          <div className="flex gap-2">
+            <button className="btn-secondary flex items-center gap-2">
               <Filter className="w-4 h-4" />
               Filtres
             </button>
-            <button className="btn-secondary text-sm">
+            <button className="btn-secondary">
               Trier par
             </button>
           </div>
         </div>
       </div>
 
-      {/* Users List - Responsive */}
+      {/* Users Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        {/* Table view (medium screens and up) */}
-        <div className="hidden md:block overflow-x-auto">
+        <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
@@ -156,85 +148,6 @@ export default function Users() {
               ))}
             </tbody>
           </table>
-        </div>
-        
-        {/* Card view (small screens) */}
-        <div className="md:hidden divide-y divide-gray-100">
-          {users?.map((user) => (
-            <div key={user.id} className="p-4 hover:bg-gray-50">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-primary font-medium">
-                      {user.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-medium">{user.name}</p>
-                    <p className="text-sm text-gray-500">{user.email}</p>
-                  </div>
-                </div>
-                <div className="relative">
-                  <button 
-                    className="p-2 hover:bg-gray-100 rounded-lg"
-                    onClick={() => setActiveMenu(activeMenu === user.id ? null : user.id)}
-                  >
-                    <MoreVertical className="w-5 h-5 text-gray-400" />
-                  </button>
-                  {activeMenu === user.id && (
-                    <div 
-                      className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-10"
-                      onClick={() => setActiveMenu(null)}
-                    >
-                      <Link 
-                        href={`/admin/users/${user.id}`}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
-                      >
-                        Voir plus de détails
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <div className="text-xs font-medium text-gray-500 uppercase">Contact</div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Mail className="w-4 h-4 mr-2" />
-                    <span className="truncate">{user.email}</span>
-                  </div>
-                  {user.phone && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Phone className="w-4 h-4 mr-2" />
-                      {user.phone}
-                    </div>
-                  )}
-                </div>
-                
-                <div className="space-y-1">
-                  <div className="text-xs font-medium text-gray-500 uppercase">Statut</div>
-                  <div>
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
-                      {translateStatus(user.status)}
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    Inscrit le {format(new Date(user.created_at), 'dd/MM/yyyy', { locale: fr })}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-3 pt-2 border-t border-gray-100">
-                <Link 
-                  href={`/admin/users/${user.id}`}
-                  className="text-sm text-primary font-medium hover:underline flex items-center"
-                >
-                  <User className="w-4 h-4 mr-1" /> Voir le profil complet
-                </Link>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>
