@@ -94,31 +94,40 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     }
 
     const login = async ({ setErrors, setStatus, ...props }) => {
-        await csrf()
+        try {
+            await csrf()
 
-        setErrors([])
-        setStatus(null)
+            setErrors([])
+            setStatus(null)
 
-        axios
-            .post('/login', props)
-            .then(response => {
-                // Stocker le rôle de l'utilisateur pour la redirection
-                if (response.data && response.data.user && response.data.user.role) {
-                    localStorage.setItem('userRole', response.data.user.role);
-                }
-                
-                mutate()
-                if (redirectIfAuthenticated) {
-                    window.location.href = redirectIfAuthenticated
-                } else {
-                    window.location.href = '/dashboard'
-                }
-            })
-            .catch(error => {
-                if (error.response.status !== 422) throw error
-
+            const response = await axios.post('/login', props)
+            
+            // Stocker le rôle de l'utilisateur pour la redirection
+            if (response.data && response.data.user && response.data.user.role) {
+                localStorage.setItem('userRole', response.data.user.role);
+            }
+            
+            await mutate()
+            
+            // Redirection basée sur le rôle de l'utilisateur
+            const userRole = response.data?.user?.role || localStorage.getItem('userRole')
+            if (userRole === 'admin') {
+                window.location.href = '/admin'
+            } else {
+                window.location.href = redirectIfAuthenticated || '/dashboard'
+            }
+            
+            return true  // Connexion réussie
+        } catch (error) {
+            if (error.response?.status === 422) {
                 setErrors(translateErrors(error.response.data.errors))
-            })
+            } else {
+                console.error('Erreur de connexion:', error)
+                setErrors({ general: ['Une erreur est survenue lors de la connexion.'] })
+            }
+            
+            return false  // Connexion échouée
+        }
     }
 
     const googleLogin = async () => {

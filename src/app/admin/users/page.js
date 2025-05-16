@@ -72,8 +72,8 @@ export default function Users() {
         </div>
       </div>
 
-      {/* Users Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* Users Table - Desktop */}
+      <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -149,6 +149,74 @@ export default function Users() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Users Cards - Mobile */}
+      <div className="md:hidden space-y-4">
+        {users?.map((user) => (
+          <div key={user.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-primary font-medium">
+                      {user.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-medium">{user.name}</p>
+                    <p className="text-sm text-gray-500">{user.email}</p>
+                  </div>
+                </div>
+                <div className="relative">
+                  <button 
+                    className="p-2 hover:bg-gray-100 rounded-lg"
+                    onClick={() => setActiveMenu(activeMenu === user.id ? null : user.id)}
+                  >
+                    <MoreVertical className="w-5 h-5 text-gray-400" />
+                  </button>
+                  {activeMenu === user.id && (
+                    <div 
+                      className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 z-10"
+                      onClick={() => setActiveMenu(null)}
+                    >
+                      <Link 
+                        href={`/admin/users/${user.id}`}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                      >
+                        Voir plus de détails
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-3 border-t border-gray-100 pt-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Statut</span>
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
+                    {translateStatus(user.status)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-500">Date d'inscription</span>
+                  <span className="text-sm text-gray-600">
+                    {format(new Date(user.created_at), 'dd MMM yyyy', { locale: fr })}
+                  </span>
+                </div>
+                <div className="flex items-center text-sm text-gray-600 mt-2">
+                  <Mail className="w-4 h-4 mr-2 text-gray-400" />
+                  {user.email}
+                </div>
+                {user.phone && (
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Phone className="w-4 h-4 mr-2 text-gray-400" />
+                    {user.phone}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

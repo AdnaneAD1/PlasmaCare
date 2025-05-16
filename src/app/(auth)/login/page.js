@@ -40,23 +40,18 @@ export default function Login() {
     e.preventDefault()
     setIsLoading(true)
     try {
-      // Stocker les informations de connexion dans localStorage pour une redirection manuelle
-      localStorage.setItem('pendingRedirect', 'true');
-      localStorage.setItem('lastLoginEmail', formData.email);
-      
-      await login({
+      const success = await login({
         email: formData.email,
         password: formData.password,
         setErrors,
         setStatus,
       })
       
-      // Forcer la redirection après un court délai
-      setTimeout(() => {
-        // Redirection manuelle vers la page appropriée
-        const redirectTo = user && user.role === 'admin' ? '/admin' : '/dashboard';
-        window.location.href = redirectTo;
-      }, 500);
+      // Ne pas rediriger si la connexion a échoué
+      if (success) {
+        // La redirection sera gérée par le hook useAuth
+        console.log('Connexion réussie')
+      }
     } finally {
       setIsLoading(false)
     }

@@ -47,13 +47,13 @@ export default function DashboardLayout({ children }) {
     }
   ]
 
-  useEffect(() => {
-    if (user) {
-      if (user.role === 'admin') {
-        window.location.href = '/admin';
-      }
-    }
-  }, [user])
+  // useEffect(() => {
+  //   if (user) {
+  //     if (user.role === 'admin') {
+  //       window.location.href = '/admin';
+  //     }
+  //   }
+  // }, [user])
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
