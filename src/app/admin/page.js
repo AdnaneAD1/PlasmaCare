@@ -3,6 +3,8 @@
 import { Users, Calendar, TrendingUp, FileText, Package, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useAdminDashboard } from '@/hooks/useAdminDashboard';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 export default function AdminDashboard() {
   const { stats, isLoading, error } = useAdminDashboard();
@@ -69,6 +71,30 @@ export default function AdminDashboard() {
         return 'Annulé';
       default:
         return status;
+    }
+  };
+  
+  // Formater la date pour l'affichage
+  const formatAppointmentDate = (dateString) => {
+    try {
+      // Si la date est au format ISO complet (2025-05-23T00:00:00.000000Z)
+      if (dateString.includes('T')) {
+        const date = new Date(dateString);
+        return format(date, 'dd MMMM yyyy', { locale: fr });
+      }
+      // Si la date est déjà formatée ou au format YYYY-MM-DD
+      else if (dateString.includes('-')) {
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+          const date = new Date(parts[0], parts[1] - 1, parts[2]);
+          return format(date, 'dd MMMM yyyy', { locale: fr });
+        }
+      }
+      // Si aucun format reconnu, retourner la chaîne telle quelle
+      return dateString;
+    } catch (error) {
+      console.error('Erreur lors du formatage de la date:', error);
+      return dateString;
     }
   };
 
@@ -165,7 +191,7 @@ export default function AdminDashboard() {
                   </div>
                   <div className="flex items-center gap-4">
                     <p className="text-sm text-gray-500">
-                      {appointment.date} {appointment.time}
+                      {formatAppointmentDate(appointment.date)} {appointment.time}
                     </p>
                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
                       {translateStatus(appointment.status)}

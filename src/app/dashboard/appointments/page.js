@@ -1,16 +1,20 @@
 'use client'
 
-import { Calendar, Clock, RefreshCw, Check, Clock4, X, Plus } from 'lucide-react';
+import { Calendar, Clock, RefreshCw, Check, Clock4, X, Plus, CreditCard } from 'lucide-react';
 import Script from 'next/script';
 import { useAppointments } from '../../../hooks/useAppointments';
 import { useState, useEffect } from 'react';
 import { EmptyState } from '@/components/ui/EmptyState';
+import AppointmentBookingForm from '@/components/forms/AppointmentBookingForm';
+import { format, parse } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 export default function Appointments() {
   const { appointments, isLoading, error, updateAppointmentStatus } = useAppointments();
   const [isCalendlyLoaded, setIsCalendlyLoaded] = useState(false);
   const [showCalendly, setShowCalendly] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
+  const [showBookingForm, setShowBookingForm] = useState(false);
 
   useEffect(() => {
     if (window.Calendly && showCalendly) {
@@ -82,6 +86,30 @@ export default function Appointments() {
         return status;
     }
   };
+  
+  // Formater la date pour l'affichage
+  const formatAppointmentDate = (dateString) => {
+    try {
+      // Si la date est au format ISO complet (2025-05-23T00:00:00.000000Z)
+      if (dateString.includes('T')) {
+        const date = new Date(dateString);
+        return format(date, 'dd MMMM yyyy', { locale: fr });
+      }
+      // Si la date est déjà formatée ou au format YYYY-MM-DD
+      else if (dateString.includes('-')) {
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+          const date = new Date(parts[0], parts[1] - 1, parts[2]);
+          return format(date, 'dd MMMM yyyy', { locale: fr });
+        }
+      }
+      // Si aucun format reconnu, retourner la chaîne telle quelle
+      return dateString;
+    } catch (error) {
+      console.error('Erreur lors du formatage de la date:', error);
+      return dateString;
+    }
+  };
 
   if (isLoading) {
     return <div>Chargement...</div>;
@@ -99,29 +127,41 @@ export default function Appointments() {
         <div className="p-6 border-b">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold">Prendre un rendez-vous</h2>
-            {showCalendly && isCalendlyLoaded && (
-              <button
-                onClick={reloadCalendly}
-                className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Recharger le calendrier
-              </button>
-            )}
+            <div className="flex gap-2">
+              {showCalendly && isCalendlyLoaded && (
+                <button
+                  onClick={reloadCalendly}
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 rounded-lg hover:bg-gray-100"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Recharger le calendrier
+                </button>
+              )}
+            </div>
           </div>
         </div>
         
         {!showCalendly ? (
           <div className="p-16 flex flex-col items-center justify-center bg-gray-50">
-            <button
-              onClick={() => setShowCalendly(true)}
-              className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              <Plus className="w-5 h-5" />
-              Ouvrir le calendrier
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowCalendly(true)}
+                className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                <Calendar className="w-5 h-5" />
+                Calendrier Calendly
+              </button>
+              
+              <button
+                onClick={() => setShowBookingForm(true)}
+                className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                <CreditCard className="w-5 h-5" />
+                Réserver avec paiement
+              </button>
+            </div>
             <p className="mt-4 text-sm text-gray-600">
-              Cliquez pour afficher le calendrier de prise de rendez-vous
+              Choisissez votre méthode de réservation préférée
             </p>
           </div>
         ) : (
@@ -146,6 +186,14 @@ export default function Appointments() {
             onLoad={handleCalendlyLoad}
           />
         )}
+        
+        {/* Formulaire de réservation avec paiement */}
+        {showBookingForm && (
+          <AppointmentBookingForm 
+            onClose={() => setShowBookingForm(false)} 
+            existingAppointments={appointments}
+          />
+        )}
       </div>
 
       {appointments.length > 0 ? (
@@ -159,7 +207,7 @@ export default function Appointments() {
                     <div className="flex flex-col">
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
-                        <span>{appointment.date}</span>
+                        <span>{formatAppointmentDate(appointment.date)}</span>
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Clock className="w-4 h-4 text-gray-400" />

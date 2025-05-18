@@ -6,6 +6,8 @@ import { AdminAppointmentForm } from '../../../components/forms/AdminAppointment
 import { DropdownMenu } from '../../../components/ui/DropdownMenu';
 import { useAppointments } from '@/hooks/useAppointments';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 export default function AdminAppointments() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -57,6 +59,35 @@ export default function AdminAppointments() {
       }
     }
   };
+  
+  // Fonction pour formater la date correctement
+  const formatAppointmentDate = (dateString) => {
+    try {
+      // Si la date est au format ISO complet (2025-05-23T00:00:00.000000Z)
+      if (typeof dateString === 'string' && dateString.includes('T')) {
+        const date = new Date(dateString);
+        return format(date, 'dd MMMM yyyy', { locale: fr });
+      }
+      // Si la date est un objet Date
+      else if (dateString instanceof Date) {
+        return format(dateString, 'dd MMMM yyyy', { locale: fr });
+      }
+      // Si la date est au format YYYY-MM-DD
+      else if (typeof dateString === 'string' && dateString.includes('-')) {
+        const parts = dateString.split('-');
+        if (parts.length === 3) {
+          const date = new Date(parts[0], parts[1] - 1, parts[2]);
+          return format(date, 'dd MMMM yyyy', { locale: fr });
+        }
+      }
+      // Si aucun format reconnu, utiliser toLocaleDateString comme fallback
+      return new Date(dateString).toLocaleDateString('fr-FR');
+    } catch (error) {
+      console.error('Erreur lors du formatage de la date:', error, dateString);
+      // En cas d'erreur, retourner la chaîne telle quelle
+      return dateString;
+    }
+  };
 
   return (
     <div>
@@ -84,7 +115,7 @@ export default function AdminAppointments() {
                     <div className="flex flex-col">
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
-                        <span>{new Date(appointment.date).toLocaleDateString('fr-FR')}</span>
+                        <span>{formatAppointmentDate(appointment.date)}</span>
                       </div>
                       <div className="flex items-center space-x-2 mt-1">
                         <Clock className="w-4 h-4 text-gray-400" />
@@ -96,7 +127,7 @@ export default function AdminAppointments() {
                       </div>
                     </div>
                     <div>
-                      <h3 className="font-medium text-primary">{appointment.treatment.name}</h3>
+                      <h3 className="font-medium text-primary">{appointment.title}</h3>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
