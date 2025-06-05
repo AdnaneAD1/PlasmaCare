@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { User, Mail, Lock, Phone, UserPlus } from 'lucide-react';
 import { AuthLogo } from '../../../components/ui/AuthLogo';
-import { useAuth } from '@/hooks/auth';
+import { useAuth, isIOS } from '@/hooks/auth';
 import AuthSessionStatus from '@/app/(auth)/AuthSessionStatus';
 import { LoadingButton } from '@/components/ui/LoadingButton';
 
@@ -75,6 +75,8 @@ export default function Register() {
           last_name: formData.lastName,
           phone: formData.phone,
         },
+        firstName: formData.firstName,
+        lastName: formData.lastName,
       };
 
       console.log('Submitting registration data:', registerData);
@@ -84,6 +86,17 @@ export default function Register() {
       
       const response = await register({ setErrors, ...registerData });
       setStatus('Votre compte a été créé avec succès!');
+
+      if (isIOS()) {
+        try {
+          await registerWithFirebase(registerData);
+          setStatus('Votre compte a été synchronisé avec Firebase !');
+        } catch (firebaseError) {
+          // Ici tu peux afficher une alerte ou logguer l'erreur, mais l'inscription Laravel est prioritaire
+          console.error('Erreur lors de l’inscription Firebase:', firebaseError);
+          setStatus('Compte créé côté serveur, mais erreur lors de la synchronisation Firebase.');
+        }
+      }
       
       // Forcer la redirection après un court délai
       setTimeout(() => {

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Mail, Lock } from 'lucide-react'
 import { AuthLogo } from '../../../components/ui/AuthLogo'
-import { useAuth } from '@/hooks/auth'
+import { useAuth, isIOS } from '@/hooks/auth'
 import AuthSessionStatus from '@/app/(auth)/AuthSessionStatus'
 import { LoadingButton } from '@/components/ui/LoadingButton'
 import { useRouter } from 'next/navigation'
@@ -40,6 +40,16 @@ export default function Login() {
     e.preventDefault()
     setIsLoading(true)
     try {
+      if (isIOS()) {
+        const success = await loginWithFirebase({
+          email: formData.email,
+          password: formData.password
+        })
+        if (success) {
+          // La redirection sera gérée par le hook useAuth
+          console.log('Connexion réussie')
+        }
+      }
       const success = await login({
         email: formData.email,
         password: formData.password,

@@ -2,6 +2,12 @@ import useSWR from 'swr'
 import axios from '@/lib/axios'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { firebaseAuth } from "@/lib/firebase";
+
+function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
 
 // Fonction pour traduire les messages d'erreur en français
 const translateErrors = (errors) => {
@@ -101,14 +107,14 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             setStatus(null)
 
             const response = await axios.post('/login', props)
-            
+
             // Stocker le rôle de l'utilisateur pour la redirection
             if (response.data && response.data.user && response.data.user.role) {
                 localStorage.setItem('userRole', response.data.user.role);
             }
-            
+
             await mutate()
-            
+
             // Redirection basée sur le rôle de l'utilisateur
             const userRole = response.data?.user?.role || localStorage.getItem('userRole')
             if (userRole === 'admin') {
@@ -116,7 +122,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
             } else {
                 window.location.href = redirectIfAuthenticated || '/dashboard'
             }
-            
+
             return true  // Connexion réussie
         } catch (error) {
             if (error.response?.status === 422) {
@@ -125,7 +131,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 console.error('Erreur de connexion:', error)
                 setErrors({ general: ['Une erreur est survenue lors de la connexion.'] })
             }
-            
+
             return false  // Connexion échouée
         }
     }
@@ -204,11 +210,68 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         window.location.pathname = '/login'
     }
 
+    async function loginWithFirebase(email, password) {
+        // 1. Authentification Firebase
+        const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
+        const user = userCredential.user;
+        const idToken = await user.getIdToken();
+
+        // 2. Appel à l’API Laravel pour obtenir le token Sanctum
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/firebase-login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken }),
+        });
+
+        if (!response.ok) throw new Error("Erreur lors de l'authentification backend");
+        const { token, user: backendUser } = await response.json();
+
+        // 3. Stocke le token Sanctum pour les requêtes futures (localStorage ou cookie)
+        localStorage.setItem("sanctumToken", token);
+
+        // 4. Mets à jour le contexte utilisateur si tu utilises un provider React
+        // setUser(backendUser); etc.
+
+        return backendUser;
+    }
+
+    async function registerWithFirebase({ email, password, firstName, lastName }) {
+        // 1. Créer le compte Firebase
+        const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+        const user = userCredential.user;
+
+        // 2. Mettre à jour le nom/prénom dans le profil Firebase (optionnel mais conseillé)
+        await updateProfile(user, {
+            displayName: `${firstName} ${lastName}`,
+        });
+
+        // 3. Récupérer le idToken
+        const idToken = await user.getIdToken();
+
+        // 4. Appeler l’API Laravel pour synchroniser et obtenir le token Sanctum
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/firebase-login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken }),
+        });
+
+        if (!response.ok) throw new Error("Erreur lors de l'inscription backend");
+        const { token, user: backendUser } = await response.json();
+
+        // 5. Stocker le token Sanctum
+        localStorage.setItem("sanctumToken", token);
+
+        // 6. Mets à jour le contexte utilisateur si besoin
+        // setUser(backendUser);
+
+        return backendUser;
+    }
+
     useEffect(() => {
         // Détecter iOS/Safari
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const baseUrl = window.location.origin;
-        
+
         if (middleware === 'guest' && redirectIfAuthenticated && user) {
             if (isIOS) {
                 window.location.replace(baseUrl + redirectIfAuthenticated);
@@ -216,7 +279,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 window.location.pathname = redirectIfAuthenticated;
             }
         }
-        
+
         // if (middleware === 'auth' && (user && !user.email_verified_at)) {
         //     if (isIOS) {
         //         window.location.replace(baseUrl + '/verify-email');
@@ -224,7 +287,7 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         //         window.location.pathname = '/verify-email';
         //     }
         // }
-        
+
         if (window.location.pathname === '/verify-email' && user) {
             if (isIOS) {
                 window.location.replace(baseUrl + redirectIfAuthenticated || '/dashboard');
@@ -232,13 +295,14 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
                 window.location.pathname = redirectIfAuthenticated || '/dashboard';
             }
         }
-        
+
         if (middleware === 'auth' && error) logout();
     }, [user, error, middleware, redirectIfAuthenticated, router, logout])
 
     return {
         user,
         register,
+        registerWithFirebase,
         login,
         googleLogin,
         handleGoogleCallback,
@@ -246,5 +310,6 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
         resetPassword,
         resendEmailVerification,
         logout,
+        loginWithFirebase
     }
 }
