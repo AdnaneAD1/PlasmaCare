@@ -5,9 +5,7 @@ import { useRouter } from 'next/navigation'
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { firebaseAuth } from "@/lib/firebase";
 
-function isIOS() {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-}
+
 
 // Fonction pour traduire les messages d'erreur en français
 const translateErrors = (errors) => {
@@ -37,6 +35,10 @@ const translateErrors = (errors) => {
 
     return translatedErrors;
 };
+
+export function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
 
 // Fonction pour traduire les messages de succès en français
 export const translateStatus = (status) => {
